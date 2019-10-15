@@ -1,0 +1,59 @@
+{
+  "ReRoutes": [
+
+    {
+      "DownstreamPathTemplate": "/employees",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/employees",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "ServiceName": "employee",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    
+    {
+      "DownstreamPathTemplate": "/employees/{id}",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/employees/{id}",
+      "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
+      "ServiceName": "employee",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+    
+    {
+      "DownstreamPathTemplate": "/users/{id}/roles",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/users/{id}/roles",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "ServiceName": "role",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    },
+
+    {
+      "DownstreamPathTemplate": "/departments",
+      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/departments",
+      "UpstreamHttpMethod": [ "Get" ],
+      "ServiceName": "department",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      }
+    }
+    
+  ],
+  
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:80",
+    "ServiceDiscoveryProvider": {
+      "Host": "consul",
+      "Port": 8500,
+      "Type": "Consul"
+    }
+  }
+  
+}

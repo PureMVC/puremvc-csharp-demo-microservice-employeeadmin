@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "eb6559e3-ed48-4cb7-83db-072529deae6f",
+		"name": "EmployeeAdmin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/employees",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:6001/employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/employees/:id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:6001/employees/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"employees",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/employees",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"sshemp\",\n    \"first\": \"Shemp\",\n    \"last\": \"Stooge\",\n    \"email\": \"sshemp@stooges.com\",\n    \"department\": {\n        \"id\": 2,\n        \"name\": \"Sales\"\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:6001/employees",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"employees"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/employees/:id",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"first\": \"Shemp2\",\n\t\"last\": \"Stooge\",\n\t\"email\": \"shemp@stooges.com\",\n\t\"department\": {\n\t\t\"id\": \"2\",\n\t\t\"name\": \"Sales\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://localhost:6001/employees/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"employees",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/employees/:id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:6001/employees/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"employees",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/employees/:id/roles",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:6001/users/3/roles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"users",
+						"3",
+						"roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/employees/:id/roles",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[7, 8, 9]"
+				},
+				"url": {
+					"raw": "http://localhost:6001/users/3/roles",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"users",
+						"3",
+						"roles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/departments",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:6001/departments",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "6001",
+					"path": [
+						"departments"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

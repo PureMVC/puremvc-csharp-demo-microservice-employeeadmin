@@ -1,0 +1,116 @@
+version: '3'
+
+services:
+
+  consul:
+    image: consul:1.6
+    container_name: consul
+    ports:
+      - 8300:8300
+      - 8400:8400
+      - 8500:8500
+        
+  service:
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    container_name: service
+    restart: on-failure
+    working_dir: /service
+    command: bash -c "dotnet build --configuration Release Service.csproj && dotnet bin/Release/netcoreapp2.2/Service.dll"
+    ports:
+      - 6001:80
+    volumes:
+      - "./Service:/service"
+    environment:
+      CONSUL_HOST: http://consul:8500
+    depends_on:
+      - consul
+      - employee
+      - role
+      - department
+
+  employee:
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    container_name: employee
+    restart: on-failure
+    working_dir: /service
+    command: bash -c "dotnet build --configuration Release Employee.csproj && dotnet bin/Release/netcoreapp2.2/Employee.dll"
+    ports:
+      - 6003:80
+    volumes:
+      - "./Employee:/service"
+    environment:
+      DATABASE_HOST: database
+      DATABASE_NAME: EmployeeAdmin
+      DATABASE_USER: sa
+      DATABASE_PASSWORD: P@55w0rd
+      CONSUL_HOST: http://consul:8500
+      SERVICE_PORT: 80
+    depends_on:
+      - consul
+      - database
+
+  role:
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    container_name: role
+    restart: on-failure
+    working_dir: /service
+    command: bash -c "dotnet build --configuration Release Role.csproj && dotnet bin/Release/netcoreapp2.2/Role.dll"
+    ports:
+      - 6005:80
+    volumes:
+      - "./Role:/service"
+    environment:
+      DATABASE_HOST: database
+      DATABASE_NAME: EmployeeAdmin
+      DATABASE_USER: sa
+      DATABASE_PASSWORD: P@55w0rd
+      CONSUL_HOST: http://consul:8500
+      SERVICE_PORT: 80
+    depends_on:
+      - consul
+      - database
+
+  department:
+    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    container_name: department
+    restart: on-failure
+    working_dir: /service
+    command: bash -c "dotnet build --configuration Release Department.csproj && dotnet bin/Release/netcoreapp2.2/Department.dll"
+    ports:
+      - 6007:80
+    volumes:
+      - "./Department:/service"
+    environment:
+      DATABASE_HOST: database
+      DATABASE_NAME: EmployeeAdmin
+      DATABASE_USER: sa
+      DATABASE_PASSWORD: P@55w0rd
+      CONSUL_HOST: http://consul:8500
+      SERVICE_PORT: 80
+    depends_on:
+      - consul
+      - database
+
+  database:
+    image: microsoft/mssql-server-linux:2017-latest
+    container_name: database
+    ports:
+      - 1433:1433
+    volumes:
+      - /var/opt/mssql
+    environment:
+      SA_PASSWORD: P@55w0rd
+      ACCEPT_EULA: "Y"
+      
+  database-schema:
+    image: mcr.microsoft.com/mssql-tools
+    container_name: database-schema
+    volumes:
+      - ./assets:/service
+    working_dir: /service
+    command: bash -c "chmod +x entry-point.sh && ./entry-point.sh"
+    environment:
+      SA_HOST: database
+      SA_PASSWORD: P@55w0rd
+    depends_on:
+      - database

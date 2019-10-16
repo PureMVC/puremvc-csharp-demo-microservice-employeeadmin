@@ -28,7 +28,7 @@ namespace Employee.Controller
                 {"DATABASE_HOST", Environment.GetEnvironmentVariable("DATABASE_HOST")},
                 {"DATABASE_NAME", Environment.GetEnvironmentVariable("DATABASE_NAME")},
                 {"DATABASE_USER", Environment.GetEnvironmentVariable("DATABASE_USER")},
-                {"DATABASE_PASSWORD", Environment.GetEnvironmentVariable("DATABASE_PASSWORD")},
+                {"SA_PASSWORD", Environment.GetEnvironmentVariable("SA_PASSWORD")},
                 {"CONSUL_HOST", Environment.GetEnvironmentVariable("CONSUL_HOST")},
                 {"SERVICE_PORT", Environment.GetEnvironmentVariable("SERVICE_PORT")}
             };
@@ -57,7 +57,7 @@ namespace Employee.Controller
                     Initial Catalog={env["DATABASE_NAME"]};
                     Persist Security Info=True;
                     User ID={env["DATABASE_USER"]};
-                    Password={env["DATABASE_PASSWORD"]};";
+                    Password={env["SA_PASSWORD"]};";
             
                 Facade.RegisterCommand(ApplicationFacade.SERVICE, () => new ServiceCommand());
                 Facade.RegisterProxy(new ServiceProxy(() => new SqlConnection(connection)));

@@ -14,6 +14,10 @@ namespace Role
 {
     public class ApplicationFacade : Facade
     {
+        private ApplicationFacade(string key) : base(key)
+        {
+        }
+        
         protected override void InitializeController()
         {
             base.InitializeController();
@@ -22,7 +26,7 @@ namespace Role
 
         public static ApplicationFacade GetInstance()
         {
-            return (ApplicationFacade) Facade.GetInstance(() => new ApplicationFacade());
+            return (ApplicationFacade) Facade.GetInstance("service", () => new ApplicationFacade("service"));
         }
 
         public void Startup(Service startup)

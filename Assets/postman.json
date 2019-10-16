@@ -130,15 +130,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:6001/users/3/roles",
+					"raw": "http://localhost:6001/employees/1/roles",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "6001",
 					"path": [
-						"users",
-						"3",
+						"employees",
+						"1",
 						"roles"
 					]
 				}
@@ -162,15 +162,15 @@
 					"raw": "[7, 8, 9]"
 				},
 				"url": {
-					"raw": "http://localhost:6001/users/3/roles",
+					"raw": "http://localhost:6001/employees/1/roles",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "6001",
 					"path": [
-						"users",
-						"3",
+						"employees",
+						"1",
 						"roles"
 					]
 				}

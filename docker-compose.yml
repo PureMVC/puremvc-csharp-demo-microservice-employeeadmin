@@ -11,15 +11,14 @@ services:
       - 8500:8500
         
   service:
-    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    image: service
     container_name: service
     restart: on-failure
-    working_dir: /service
-    command: bash -c "dotnet build --configuration Release Service.csproj && dotnet bin/Release/netcoreapp2.2/Service.dll"
+    build:
+      context: ./Service
+      dockerfile: Dockerfile
     ports:
       - 6001:80
-    volumes:
-      - "./Service:/service"
     environment:
       CONSUL_HOST: http://consul:8500
     depends_on:
@@ -29,15 +28,14 @@ services:
       - department
 
   employee:
-    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    image: employee
     container_name: employee
     restart: on-failure
-    working_dir: /service
-    command: bash -c "dotnet build --configuration Release Employee.csproj && dotnet bin/Release/netcoreapp2.2/Employee.dll"
+    build:
+      context: ./Employee
+      dockerfile: Dockerfile
     ports:
       - 6003:80
-    volumes:
-      - "./Employee:/service"
     environment:
       DATABASE_HOST: database
       DATABASE_NAME: EmployeeAdmin
@@ -50,15 +48,14 @@ services:
       - database
 
   role:
-    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    image: role
     container_name: role
     restart: on-failure
-    working_dir: /service
-    command: bash -c "dotnet build --configuration Release Role.csproj && dotnet bin/Release/netcoreapp2.2/Role.dll"
+    build:
+      context: ./Role
+      dockerfile: Dockerfile
     ports:
       - 6005:80
-    volumes:
-      - "./Role:/service"
     environment:
       DATABASE_HOST: database
       DATABASE_NAME: EmployeeAdmin
@@ -71,15 +68,14 @@ services:
       - database
 
   department:
-    image: mcr.microsoft.com/dotnet/core/sdk:2.2
+    image: department
     container_name: department
     restart: on-failure
-    working_dir: /service
-    command: bash -c "dotnet build --configuration Release Department.csproj && dotnet bin/Release/netcoreapp2.2/Department.dll"
+    build:
+      context: ./Department
+      dockerfile: Dockerfile
     ports:
       - 6007:80
-    volumes:
-      - "./Department:/service"
     environment:
       DATABASE_HOST: database
       DATABASE_NAME: EmployeeAdmin
@@ -101,7 +97,7 @@ services:
     environment:
       SA_PASSWORD: P@55w0rd
       ACCEPT_EULA: "Y"
-      
+
   database-schema:
     image: mcr.microsoft.com/mssql-tools
     container_name: database-schema

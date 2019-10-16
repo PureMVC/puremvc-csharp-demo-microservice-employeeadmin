@@ -2,11 +2,11 @@
   "ReRoutes": [
 
     {
-      "DownstreamPathTemplate": "/employees",
+      "DownstreamPathTemplate": "/employees/{id}/roles",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/employees",
-      "UpstreamHttpMethod": [ "Get", "Post" ],
-      "ServiceName": "employee",
+      "UpstreamPathTemplate": "/employees/{id}/roles",
+      "UpstreamHttpMethod": [ "Get", "Put" ],
+      "ServiceName": "role",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       }
@@ -22,13 +22,13 @@
         "Type": "LeastConnection"
       }
     },
-    
+
     {
-      "DownstreamPathTemplate": "/users/{id}/roles",
+      "DownstreamPathTemplate": "/employees",
       "DownstreamScheme": "http",
-      "UpstreamPathTemplate": "/users/{id}/roles",
-      "UpstreamHttpMethod": [ "Get", "Put" ],
-      "ServiceName": "role",
+      "UpstreamPathTemplate": "/employees",
+      "UpstreamHttpMethod": [ "Get", "Post" ],
+      "ServiceName": "employee",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       }

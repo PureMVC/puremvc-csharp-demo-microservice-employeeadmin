@@ -6,7 +6,7 @@
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/employees/{id}/roles",
       "UpstreamHttpMethod": [ "Get", "Put" ],
-      "ServiceName": "role",
+      "ServiceName": "Role",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       }
@@ -17,7 +17,7 @@
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/employees/{id}",
       "UpstreamHttpMethod": [ "Get", "Put", "Delete" ],
-      "ServiceName": "employee",
+      "ServiceName": "Employee",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       }
@@ -28,7 +28,7 @@
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/employees",
       "UpstreamHttpMethod": [ "Get", "Post" ],
-      "ServiceName": "employee",
+      "ServiceName": "Employee",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       }
@@ -39,7 +39,7 @@
       "DownstreamScheme": "http",
       "UpstreamPathTemplate": "/departments",
       "UpstreamHttpMethod": [ "Get" ],
-      "ServiceName": "department",
+      "ServiceName": "Department",
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       }

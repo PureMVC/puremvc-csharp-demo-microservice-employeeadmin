@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Employee.Model.ValueObject;
 using PureMVC.Patterns.Proxy;
 
@@ -50,14 +51,11 @@ namespace Employee.Model
                         {
                             var roleIds = reader.GetString(reader.GetOrdinal("RoleIds")).Split(",");
                             var roleNames = reader.GetString(reader.GetOrdinal("RoleNames")).Split(",");
-                            for (var i = 0; i < roleIds.Length; i++)
+                            roles = roleIds.Zip(roleNames, (roleId, roleName) => new RoleVO
                             {
-                                roles.Add(new RoleVO
-                                {
-                                    Id = Int32.Parse(roleIds[i]), 
-                                    Name = roleNames[i]
-                                });
-                            }
+                                Id = Int32.Parse(roleId),
+                                Name = roleName
+                            }).ToList();
                         }
 
                         rows.Add(new EmployeeVO
@@ -79,7 +77,6 @@ namespace Employee.Model
                     return rows;
                 }
             }
-            
         }
 
         public EmployeeVO FindById(int id)
@@ -113,14 +110,11 @@ namespace Employee.Model
                     {
                         var roleIds = reader.GetString(reader.GetOrdinal("RoleIds")).Split(",");
                         var roleNames = reader.GetString(reader.GetOrdinal("RoleNames")).Split(",");
-                        for (var i = 0; i < roleIds.Length; i++)
+                        roles = roleIds.Zip(roleNames, (roleId, roleName) => new RoleVO
                         {
-                            roles.Add(new RoleVO
-                            {
-                                Id = Int32.Parse(roleIds[i]), 
-                                Name = roleNames[i]
-                            });
-                        }
+                            Id = Int32.Parse(roleId),
+                            Name = roleName
+                        }).ToList();
                     }
                     
                     return new EmployeeVO
@@ -139,7 +133,6 @@ namespace Employee.Model
                     };
                 }
             }
-            
         }
 
         public int Save(EmployeeVO employee)

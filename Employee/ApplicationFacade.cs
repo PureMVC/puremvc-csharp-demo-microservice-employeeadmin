@@ -24,9 +24,9 @@ namespace Employee
             RegisterCommand(STARTUP, () => new StartupCommand());
         }
 
-        public static ApplicationFacade GetInstance()
+        public static ApplicationFacade GetInstance(string key)
         {
-            return (ApplicationFacade) Facade.GetInstance("service", () => new ApplicationFacade("service"));
+            return (ApplicationFacade) Facade.GetInstance(key, () => new ApplicationFacade(key));
         }
 
         public void Startup(Service startup)

@@ -24,9 +24,8 @@
         "DATABASE_HOST": "localhost",
         "DATABASE_NAME": "EmployeeAdmin",
         "DATABASE_USER": "sa",
-        "DATABASE_PASSWORD": "P@55w0rd",
-        "CONSUL_HOST": "http://localhost:8500",
-        "SERVICE_PORT": "5007"
+        "SA_PASSWORD": "P@55w0rd",
+        "CONSUL_HOST": "http://localhost:8500"
       }
     }
   }

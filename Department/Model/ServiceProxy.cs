@@ -43,7 +43,6 @@ namespace Department.Model
                     return rows;
                 }
             }
-            
         }
         
         private Func<IDbConnection> ConnectionFactory { get; }

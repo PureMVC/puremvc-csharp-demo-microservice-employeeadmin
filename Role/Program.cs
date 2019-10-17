@@ -6,6 +6,7 @@
 //  Your reuse is governed by the Creative Commons Attribution 3.0 License
 //
 
+using System;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Role.View.Components;
@@ -21,6 +22,10 @@ namespace Role
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((host, config) =>
+                {
+                    Environment.SetEnvironmentVariable("APPLICATION_NAME", host.HostingEnvironment.ApplicationName);
+                })
                 .UseStartup<Service>();
     }
 }

@@ -82,7 +82,7 @@ services:
     env_file: .env
     depends_on:
       - database
-        
+
   consul:
     image: consul:1.6
     container_name: consul

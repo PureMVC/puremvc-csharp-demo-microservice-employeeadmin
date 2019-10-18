@@ -144,31 +144,23 @@ namespace Employee.Model
                 command.CommandText = @"
                     INSERT INTO Employee(Username, First, Last, Email, DepartmentId) VALUES(@Username, @First, @Last, @Email, @DepartmentId);
                     SELECT SCOPE_IDENTITY()";
-                
-                var parameter = command.CreateParameter();
-                parameter.ParameterName = "@Username";
-                parameter.Value = employee.Username;
-                command.Parameters.Add(parameter);
 
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@First";
-                parameter.Value = employee.First;
-                command.Parameters.Add(parameter);
-            
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@Last";
-                parameter.Value = employee.Last;
-                command.Parameters.Add(parameter);
-            
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@Email";
-                parameter.Value = employee.Email;
-                command.Parameters.Add(parameter);
-            
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@DepartmentId";
-                parameter.Value = employee.Department.Id;
-                command.Parameters.Add(parameter);
+                var items = new Dictionary<string, object>
+                {
+                    {"@Username", employee.Username}, 
+                    {"@First", employee.First},
+                    {"@Last", employee.Last},
+                    {"@Email", employee.Email},
+                    {"@DepartmentId", employee.Department.Id}
+                };
+                
+                foreach (var (key, value) in items)
+                {
+                    var parameter = command.CreateParameter();
+                    parameter.ParameterName = key;
+                    parameter.Value = value;
+                    command.Parameters.Add(parameter);
+                }
 
                 return Convert.ToInt32(command.ExecuteScalar());
             }
@@ -182,31 +174,23 @@ namespace Employee.Model
                 connection.Open();
                 command.CommandText = @"UPDATE EMPLOYEE SET First = @First, Last = @Last, Email = @Email, DepartmentId = @DepartmentId WHERE Id = @Id";
                 
-                var parameter = command.CreateParameter();
-                parameter.ParameterName = "@First";
-                parameter.Value = employee.First;
-                command.Parameters.Add(parameter);
+                var items = new Dictionary<string, object>
+                {
+                    {"@First", employee.First},
+                    {"@Last", employee.Last},
+                    {"@Email", employee.Email},
+                    {"@DepartmentId", employee.Department.Id},
+                    {"@Id", id}
+                };
                 
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@Last";
-                parameter.Value = employee.Last;
-                command.Parameters.Add(parameter);
-                
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@Email";
-                parameter.Value = employee.Email;
-                command.Parameters.Add(parameter);
-                
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@DepartmentId";
-                parameter.Value = employee.Department.Id;
-                command.Parameters.Add(parameter);
-                
-                parameter = command.CreateParameter();
-                parameter.ParameterName = "@Id";
-                parameter.Value = id;
-                command.Parameters.Add(parameter);
-                
+                foreach (var (key, value) in items)
+                {
+                    var parameter = command.CreateParameter();
+                    parameter.ParameterName = key;
+                    parameter.Value = value;
+                    command.Parameters.Add(parameter);
+                }
+
                 return command.ExecuteNonQuery();
             }
         }

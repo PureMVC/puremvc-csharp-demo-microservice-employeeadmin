@@ -7,23 +7,31 @@
 //
 
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Employee.Model.ValueObject
 {
     public class EmployeeVO
     {
+        [JsonProperty("id")]
         public int Id { get; set;  }
 
+        [JsonProperty("username")]
         public string Username { get; set; }
         
+        [JsonProperty("first")]
         public string First { get; set; }
         
+        [JsonProperty("last")]
         public string Last { get; set; }
         
+        [JsonProperty("email")]
         public string Email { get; set; }
 
+        [JsonProperty("roles")]
         public IList<RoleVO> Roles { get; set; }
         
+        [JsonProperty("department")]
         public DepartmentVO Department { get; set; }
     }
 }

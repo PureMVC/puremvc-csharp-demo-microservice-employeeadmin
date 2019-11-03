@@ -1,16 +1,16 @@
-FROM microsoft/dotnet:2.2-sdk AS build-env
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /service
 
 # Copy csproj and restore as distinct layers
-COPY *.csproj ./
+COPY *.csproj .
 RUN dotnet restore
 
-# Copy everything else and build
-COPY . ./
+# copy everything else and build app
+COPY . .
 RUN dotnet publish -c Release -o out
 
 # Build runtime image
-FROM microsoft/dotnet:2.2-aspnetcore-runtime AS runtime
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS runtime
 WORKDIR /service
-COPY --from=build-env /service/out .
+COPY --from=build /service/out ./
 ENTRYPOINT ["dotnet", "Employee.dll"]

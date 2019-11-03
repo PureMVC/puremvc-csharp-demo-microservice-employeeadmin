@@ -1,29 +1,5 @@
-## [PureMVC](http://puremvc.github.com/) [C#](https://github.com/PureMVC/puremvc-csharp-multicore-framework/wiki) Demo: Employee Admin Microservice
-This demo illustrates techniques for performing routine server-side maintenance operations in a PureMVC-based Microservice application.
-
-## Screenshot
-![PureMVC C# Demo: Employee Admin Microservice](http://puremvc.org/pages/images/screenshots/PureMVC-Shot-CSharp-REST-EmployeeAdmin.jpg) 
-
-## Installation
-
-```
-docker-compose up
-```
-
-## Platforms / Technologies
-* [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language))
-* [REST](https://en.wikipedia.org/wiki/Representational_state_transfer)
-* [Docker](https://en.wikipedia.org/wiki/Docker_(software))
-* [Consul](https://en.wikipedia.org/wiki/Consul_(software))
-* [Ocelot](https://threemammals.com/ocelot)
-* [Microsoft SQL Server](https://en.wikipedia.org/wiki/Microsoft_SQL_Server)
-
-## Status
-Production - [Version 1.0](https://github.com/PureMVC/puremvc-csharp-demo-microservice-employeeadmin/blob/master/VERSION)
-
-## License
-* PureMVC C# Demo - Microservice Employee Admin - Copyright © 2019 [Saad Shams](https://www.linkedin.com/in/muizz)
-* PureMVC - Copyright © 2019 [Futurescale, Inc](http://futurescale.com) 
+* PureMVC C# Microservice Demo - Employee Admin - Copyright © 2019 Saad Shams
+* PureMVC - Copyright © 2019 Futurescale, Inc.
 * All rights reserved.
 
 * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

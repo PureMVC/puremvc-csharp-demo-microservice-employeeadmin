@@ -33,7 +33,7 @@ namespace Department.Controller
                         }
                         else
                         {
-                            serviceRequest.SetResultData(405, new {Code = 405, Message = "Method Not Allowed"});
+                            serviceRequest.SetResultData(405, new {code = 405, message = "Method Not Allowed"});
                         }
                         break;
 
@@ -42,7 +42,7 @@ namespace Department.Controller
                         break;
                     
                     default:
-                        serviceRequest.SetResultData(404, new {Code = 404, Message = "Not Found"});
+                        serviceRequest.SetResultData(404, new {code = 404, message = "Not Found"});
                         break;
                 }
             }

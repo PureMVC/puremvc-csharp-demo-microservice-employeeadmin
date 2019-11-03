@@ -1,4 +1,4 @@
-﻿//
+//
 //  Program.cs
 //  PureMVC CSharp Demo - EmployeeAdmin Microservice
 //
@@ -6,10 +6,9 @@
 //  Your reuse is governed by the Creative Commons Attribution 3.0 License
 //
 
-using System;
 using Employee.View.Components;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace Employee
 {
@@ -17,15 +16,11 @@ namespace Employee
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((host, config) =>
-                {
-                    Environment.SetEnvironmentVariable("APPLICATION_NAME", host.HostingEnvironment.ApplicationName);
-                })
-                .UseStartup<Service>();
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Service>(); });
     }
 }

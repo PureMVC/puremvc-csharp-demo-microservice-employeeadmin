@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+
+  consul:
+    image: consul:1.6
+    container_name: consul
+    ports:
+      - 8300:8300
+      - 8400:8400
+      - 8500:8500
         
   service:
     image: service
@@ -26,8 +34,6 @@ services:
     build:
       context: ./Employee
       dockerfile: Dockerfile
-    ports:
-      - 6003:80
     env_file: .env
     depends_on:
       - consul
@@ -40,8 +46,6 @@ services:
     build:
       context: ./Role
       dockerfile: Dockerfile
-    ports:
-      - 6005:80
     env_file: .env
     depends_on:
       - consul
@@ -54,8 +58,6 @@ services:
     build:
       context: ./Department
       dockerfile: Dockerfile
-    ports:
-      - 6007:80
     env_file: .env
     depends_on:
       - consul
@@ -82,11 +84,3 @@ services:
     env_file: .env
     depends_on:
       - database
-
-  consul:
-    image: consul:1.6
-    container_name: consul
-    ports:
-      - 8300:8300
-      - 8400:8400
-      - 8500:8500

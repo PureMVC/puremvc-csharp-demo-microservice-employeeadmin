@@ -9,12 +9,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Net;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Consul;
 using Role.Model;
 using Role.View;
 using Role.View.Components;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using PureMVC.Interfaces;
 using PureMVC.Patterns.Command;
 
@@ -24,6 +27,9 @@ namespace Role.Controller
     {
         public override void Execute(INotification notification)
         {
+            var serverAddressesFeature = ((Service) notification.Body).App.ServerFeatures.Get<IServerAddressesFeature>();
+            var address = serverAddressesFeature.Addresses.First();
+
             var env = new Dictionary<string, string>
             {
                 {"DATABASE_HOST", Environment.GetEnvironmentVariable("DATABASE_HOST")},
@@ -31,8 +37,8 @@ namespace Role.Controller
                 {"DATABASE_USER", Environment.GetEnvironmentVariable("DATABASE_USER")},
                 {"SA_PASSWORD", Environment.GetEnvironmentVariable("SA_PASSWORD")},
                 {"CONSUL_HOST", Environment.GetEnvironmentVariable("CONSUL_HOST")},
-                {"APPLICATION_NAME", Environment.GetEnvironmentVariable("APPLICATION_NAME")},
-                {"SERVICE_PORT", Environment.GetEnvironmentVariable("SERVICE_PORT")}
+                {"APPLICATION_NAME", ((Service) notification.Body).Env.ApplicationName},
+                {"SERVICE_PORT", int.Parse(address.Split(':').Last()).ToString()}
             };
 
             foreach (var (key, value) in env)
@@ -46,16 +52,15 @@ namespace Role.Controller
                     Persist Security Info=True;
                     User ID={env["DATABASE_USER"]};
                     Password={env["SA_PASSWORD"]};";
+            
+            Console.WriteLine("Connecting SQL Server.");
             do
             {
                 try
                 {
-                    using (var sqlConnection = new SqlConnection(connection))
-                    {
-                        sqlConnection.Open();
-                        Console.WriteLine("Connected to the Database.");
-                        break;
-                    }
+                    using var sqlConnection = new SqlConnection(connection);
+                    sqlConnection.Open();
+                    break;
                 }
                 catch (Exception exception)
                 {
@@ -64,24 +69,36 @@ namespace Role.Controller
                 }
             } while (true);
             
+            Console.WriteLine("Connecting Consul.");
             do
             {
                 try
                 {
-                    using (var consul = new ConsulClient(configuration => configuration.Address = new Uri(env["CONSUL_HOST"])))
+                    var service = new
                     {
-                        var registration = new AgentServiceRegistration
+                        ID = Guid.NewGuid(),
+                        Name = env["APPLICATION_NAME"],
+                        Address = Dns.GetHostName(),
+                        Port = Convert.ToInt32(env["SERVICE_PORT"]),
+                        Check = new
                         {
-                            ID = env["APPLICATION_NAME"],
-                            Name = env["APPLICATION_NAME"],
-                            Address = Dns.GetHostName(),
-                            Port = Convert.ToInt32(env["SERVICE_PORT"])
-                        };
-                        consul.Agent.ServiceDeregister(registration.ID).Wait();
-                        consul.Agent.ServiceRegister(registration).Wait();
-                        Console.WriteLine("Registered with the Consul.");
+                            Http = "http://" + Dns.GetHostName() + ":" + env["SERVICE_PORT"] + "/health",
+                            Interval = "15s"
+                        }
+                    };
+                    
+                    var bytes = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(service));
+                    var request = (HttpWebRequest) WebRequest.Create(env["CONSUL_HOST"] + "/v1/agent/service/register");
+                    request.Method = "PUT";
+                    request.ContentType = "application/json";
+                    request.ContentLength = bytes.Length;
+                    
+                    using var stream = request.GetRequestStream();
+                    stream.Write(bytes, 0, bytes.Length);
+
+                    using var response = (HttpWebResponse) request.GetResponse();
+                    if (response.StatusCode == HttpStatusCode.OK) 
                         break;
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -89,7 +106,7 @@ namespace Role.Controller
                     Task.Delay(5000).Wait();
                 }
             } while (true);
-            
+
             Facade.RegisterCommand(ApplicationFacade.SERVICE, () => new ServiceCommand());
             Facade.RegisterProxy(new ServiceProxy(() => new SqlConnection(connection)));
             Facade.RegisterMediator(new ServiceMediator((Service) notification.Body));

@@ -28,7 +28,6 @@ namespace Role.Controller
             {
                 switch (context.Request.Path.Value)
                 {
-                    
                     case "/health":
                         serviceRequest.SetResultData(200, null);
                         break;
@@ -46,7 +45,7 @@ namespace Role.Controller
                                 }
                                 else
                                 {
-                                    serviceRequest.SetResultData(404, new {Code = 404, Message = "Not Found"});
+                                    serviceRequest.SetResultData(404, new {code = 404, message = "Not Found"});
                                 }
                             }
                             else if (context.Request.Method == "PUT")
@@ -57,12 +56,12 @@ namespace Role.Controller
                             }
                             else
                             {
-                                serviceRequest.SetResultData(405, new {Code = 405, Message = "Method Not Allowed"});
+                                serviceRequest.SetResultData(405, new {code = 405, message = "Method Not Allowed"});
                             }
                         }
                         else
                         {
-                            serviceRequest.SetResultData(404, new {Code = 404, Message = "Not Found"});
+                            serviceRequest.SetResultData(404, new {code = 404, message = "Not Found"});
                         }
                         break;
                 }

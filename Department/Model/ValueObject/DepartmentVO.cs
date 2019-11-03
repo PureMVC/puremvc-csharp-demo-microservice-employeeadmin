@@ -6,16 +6,16 @@
 //  Your reuse is governed by the Creative Commons Attribution 3.0 License
 //
 
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Department.Model.ValueObject
 {
     public class DepartmentVO
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
         
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
     }
 }

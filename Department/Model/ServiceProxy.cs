@@ -24,25 +24,22 @@ namespace Department.Model
 
         public IList<DepartmentVO> FindAll()
         {
-            using (var connection = ConnectionFactory.Invoke())
-            using (var command = connection.CreateCommand())
+            using var connection = ConnectionFactory.Invoke();
+            using var command = connection.CreateCommand();
+            connection.Open();
+            command.CommandText = "SELECT Id, Name FROM Department";
+            
+            using var reader = command.ExecuteReader();
+            IList<DepartmentVO> rows = new List<DepartmentVO>();
+            while (reader.Read())
             {
-                connection.Open();
-                command.CommandText = "SELECT Id, Name FROM Department";
-                using (var reader = command.ExecuteReader())
+                rows.Add(new DepartmentVO
                 {
-                    IList<DepartmentVO> rows = new List<DepartmentVO>();
-                    while (reader.Read())
-                    {
-                        rows.Add(new DepartmentVO
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name"))
-                        });
-                    }
-                    return rows;
-                }
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Name = reader.GetString(reader.GetOrdinal("Name"))
+                });
             }
+            return rows;
         }
         
         private Func<IDbConnection> ConnectionFactory { get; }

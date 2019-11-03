@@ -8,16 +8,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using Employee.View.Interfaces;
 using Employee.Model.ValueObject;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Hosting;
 
 namespace Employee.View.Components
 {
@@ -27,17 +27,17 @@ namespace Employee.View.Components
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var serverAddressesFeature = app.ServerFeatures.Get<IServerAddressesFeature>();
-            var address = serverAddressesFeature.Addresses.First();
-            int port = int.Parse(address.Split(':').Last());
-            
-            Environment.SetEnvironmentVariable("SERVICE_PORT", port.ToString());
-            Environment.SetEnvironmentVariable("APPLICATION_NAME", env.ApplicationName);
+            App = app;
+            Env = env;
 
             ApplicationFacade.GetInstance("service").Startup(this);
             
@@ -64,13 +64,13 @@ namespace Employee.View.Components
                         if (context.Request.Method == "GET")
                         {
                             context.Response.ContentType = "application/json";
-                            context.Response.WriteAsync(JsonConvert.SerializeObject((List<EmployeeVO>) resultData));
+                            context.Response.WriteAsync(JsonSerializer.Serialize((List<EmployeeVO>) resultData));
                         }
                         else if (context.Request.Method == "POST")
                         {
                             context.Response.ContentType = "application/json";
                             context.Response.Headers.Add("Location", context.Request.Path.Value + "/" + ((EmployeeVO)resultData).Id);
-                            context.Response.WriteAsync(JsonConvert.SerializeObject(resultData));
+                            context.Response.WriteAsync(JsonSerializer.Serialize(resultData));
                         }
                         break;
 
@@ -84,12 +84,12 @@ namespace Employee.View.Components
                             if (context.Request.Method == "GET")
                             {
                                 context.Response.ContentType = "application/json";
-                                context.Response.WriteAsync(JsonConvert.SerializeObject((EmployeeVO) resultData));
+                                context.Response.WriteAsync(JsonSerializer.Serialize((EmployeeVO) resultData));
                             }
                             else if (context.Request.Method == "PUT")
                             {
                                 context.Response.ContentType = "application/json";
-                                context.Response.WriteAsync(JsonConvert.SerializeObject(resultData));
+                                context.Response.WriteAsync(JsonSerializer.Serialize(resultData));
                             }
                             else if (context.Request.Method == "DELETE")
                             {
@@ -109,15 +109,14 @@ namespace Employee.View.Components
             context.Response.StatusCode = status;
             context.Response.ContentType = "application/json";
             
-            if (exception is Exception)
-            {
-                context.Response.WriteAsync(JsonConvert.SerializeObject(new {Code = status, ((Exception) exception).Message}));
-            }
-            else
-            {
-                context.Response.WriteAsync(JsonConvert.SerializeObject(exception));
-            }
+            context.Response.WriteAsync(exception is Exception ex
+                ? JsonSerializer.Serialize(new {code = status, message = ex.Message})
+                : JsonSerializer.Serialize(exception));
         }
+        
+        public IApplicationBuilder App { get; set; }
+        
+        public IWebHostEnvironment Env { get; set; }
         
         public IService Delegate { get; set; }
     }

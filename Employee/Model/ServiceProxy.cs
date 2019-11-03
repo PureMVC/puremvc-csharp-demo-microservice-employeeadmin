@@ -25,11 +25,10 @@ namespace Employee.Model
 
         public IList<EmployeeVO> FindAll()
         {
-            using (var connection = ConnectionFactory.Invoke())
-            using (var command = connection.CreateCommand())
-            {
-                connection.Open();
-                command.CommandText = @"
+            using var connection = ConnectionFactory.Invoke();
+            using var command = connection.CreateCommand();
+            connection.Open();
+            command.CommandText = @"
                     SELECT Employee.Id, Employee.Username, Employee.First, Employee.Last, Employee.Email,
                         STRING_AGG(Role.Id, ',') WITHIN GROUP(ORDER BY Role.Id) RoleIds,
                         STRING_AGG(Role.Name, ',') WITHIN GROUP(ORDER BY Role.Id) RoleNames,
@@ -40,43 +39,40 @@ namespace Employee.Model
                     LEFT JOIN Role ON EmployeeRole.RoleId = Role.Id
                     GROUP BY Employee.Id, Employee.Username, Employee.First, Employee.Last, Employee.Email, Department.Id, Department.Name
                     ORDER BY Employee.Id";
-                
-                using (var reader = command.ExecuteReader())
-                {
-                    IList<EmployeeVO> rows = new List<EmployeeVO>();
-                    while (reader.Read())
-                    {
-                        IList<RoleVO> roles = new List<RoleVO>();
-                        if (!reader.IsDBNull(reader.GetOrdinal("RoleIds")))
-                        {
-                            var roleIds = reader.GetString(reader.GetOrdinal("RoleIds")).Split(",");
-                            var roleNames = reader.GetString(reader.GetOrdinal("RoleNames")).Split(",");
-                            roles = roleIds.Zip(roleNames, (roleId, roleName) => new RoleVO
-                            {
-                                Id = Int32.Parse(roleId),
-                                Name = roleName
-                            }).ToList();
-                        }
 
-                        rows.Add(new EmployeeVO
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")), 
-                            Username = reader.GetString(reader.GetOrdinal("Username")), 
-                            First = reader.GetString(reader.GetOrdinal("First")), 
-                            Last = reader.GetString(reader.GetOrdinal("Last")), 
-                            Email = reader.GetString(reader.GetOrdinal("Email")), 
-                            Roles = roles,
-                            Department = new DepartmentVO
-                            {
-                                Id = reader.GetInt32(reader.GetOrdinal("Department.Id")), 
-                                Name = reader.GetString(reader.GetOrdinal("Department.Name"))
-                            }
-                        });
-                    }
-                    
-                    return rows;
+            using var reader = command.ExecuteReader();
+            IList<EmployeeVO> rows = new List<EmployeeVO>();
+            while (reader.Read())
+            {
+                IList<RoleVO> roles = new List<RoleVO>();
+                if (!reader.IsDBNull(reader.GetOrdinal("RoleIds")))
+                {
+                    var roleIds = reader.GetString(reader.GetOrdinal("RoleIds")).Split(",");
+                    var roleNames = reader.GetString(reader.GetOrdinal("RoleNames")).Split(",");
+                    roles = roleIds.Zip(roleNames, (roleId, roleName) => new RoleVO
+                    {
+                        Id = Int32.Parse(roleId),
+                        Name = roleName
+                    }).ToList();
                 }
+
+                rows.Add(new EmployeeVO
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")), 
+                    Username = reader.GetString(reader.GetOrdinal("Username")), 
+                    First = reader.GetString(reader.GetOrdinal("First")), 
+                    Last = reader.GetString(reader.GetOrdinal("Last")), 
+                    Email = reader.GetString(reader.GetOrdinal("Email")), 
+                    Roles = roles,
+                    Department = new DepartmentVO
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Department.Id")), 
+                        Name = reader.GetString(reader.GetOrdinal("Department.Name"))
+                    }
+                });
             }
+                    
+            return rows;
         }
 
         public EmployeeVO FindById(int id)
@@ -101,115 +97,107 @@ namespace Employee.Model
                 parameter.ParameterName = "@Id";
                 parameter.Value = id;
                 command.Parameters.Add(parameter);
-                
-                using (var reader = command.ExecuteReader())
+
+                using var reader = command.ExecuteReader();
+                if (!reader.Read()) return null;
+                IList<RoleVO> roles = new List<RoleVO>();
+                if (!reader.IsDBNull(reader.GetOrdinal("RoleIds")))
                 {
-                    if (!reader.Read()) return null;
-                    IList<RoleVO> roles = new List<RoleVO>();
-                    if (!reader.IsDBNull(reader.GetOrdinal("RoleIds")))
+                    var roleIds = reader.GetString(reader.GetOrdinal("RoleIds")).Split(",");
+                    var roleNames = reader.GetString(reader.GetOrdinal("RoleNames")).Split(",");
+                    roles = roleIds.Zip(roleNames, (roleId, roleName) => new RoleVO
                     {
-                        var roleIds = reader.GetString(reader.GetOrdinal("RoleIds")).Split(",");
-                        var roleNames = reader.GetString(reader.GetOrdinal("RoleNames")).Split(",");
-                        roles = roleIds.Zip(roleNames, (roleId, roleName) => new RoleVO
-                        {
-                            Id = Int32.Parse(roleId),
-                            Name = roleName
-                        }).ToList();
-                    }
-                    
-                    return new EmployeeVO
-                    {
-                        Id = reader.GetInt32(reader.GetOrdinal("Id")), 
-                        Username = reader.GetString(reader.GetOrdinal("Username")), 
-                        First = reader.GetString(reader.GetOrdinal("First")), 
-                        Last = reader.GetString(reader.GetOrdinal("Last")), 
-                        Email = reader.GetString(reader.GetOrdinal("Email")), 
-                        Roles = roles,
-                        Department = new DepartmentVO 
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Department.Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Department.Name"))
-                        }
-                    };
+                        Id = Int32.Parse(roleId),
+                        Name = roleName
+                    }).ToList();
                 }
+                    
+                return new EmployeeVO
+                {
+                    Id = reader.GetInt32(reader.GetOrdinal("Id")), 
+                    Username = reader.GetString(reader.GetOrdinal("Username")), 
+                    First = reader.GetString(reader.GetOrdinal("First")), 
+                    Last = reader.GetString(reader.GetOrdinal("Last")), 
+                    Email = reader.GetString(reader.GetOrdinal("Email")), 
+                    Roles = roles,
+                    Department = new DepartmentVO 
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("Department.Id")),
+                        Name = reader.GetString(reader.GetOrdinal("Department.Name"))
+                    }
+                };
             }
         }
 
         public int Save(EmployeeVO employee)
         {
-            using (var connection = ConnectionFactory.Invoke())
-            using (var command = connection.CreateCommand())
-            {
-                connection.Open();
-                command.CommandText = @"
+            using var connection = ConnectionFactory.Invoke();
+            using var command = connection.CreateCommand();
+            connection.Open();
+            command.CommandText = @"
                     INSERT INTO Employee(Username, First, Last, Email, DepartmentId) VALUES(@Username, @First, @Last, @Email, @DepartmentId);
                     SELECT SCOPE_IDENTITY()";
 
-                var items = new Dictionary<string, object>
-                {
-                    {"@Username", employee.Username}, 
-                    {"@First", employee.First},
-                    {"@Last", employee.Last},
-                    {"@Email", employee.Email},
-                    {"@DepartmentId", employee.Department.Id}
-                };
+            var items = new Dictionary<string, object>
+            {
+                {"@Username", employee.Username}, 
+                {"@First", employee.First},
+                {"@Last", employee.Last},
+                {"@Email", employee.Email},
+                {"@DepartmentId", employee.Department.Id}
+            };
                 
-                foreach (var (key, value) in items)
-                {
-                    var parameter = command.CreateParameter();
-                    parameter.ParameterName = key;
-                    parameter.Value = value;
-                    command.Parameters.Add(parameter);
-                }
-
-                return Convert.ToInt32(command.ExecuteScalar());
+            foreach (var (key, value) in items)
+            {
+                var parameter = command.CreateParameter();
+                parameter.ParameterName = key;
+                parameter.Value = value;
+                command.Parameters.Add(parameter);
             }
+
+            return Convert.ToInt32(command.ExecuteScalar());
         }
         
         public int UpdateById(int id, EmployeeVO employee)
         {
-            using (var connection = ConnectionFactory.Invoke())
-            using (var command = connection.CreateCommand())
+            using var connection = ConnectionFactory.Invoke();
+            using var command = connection.CreateCommand();
+            connection.Open();
+            command.CommandText = @"UPDATE EMPLOYEE SET First = @First, Last = @Last, Email = @Email, DepartmentId = @DepartmentId WHERE Id = @Id";
+                
+            var items = new Dictionary<string, object>
             {
-                connection.Open();
-                command.CommandText = @"UPDATE EMPLOYEE SET First = @First, Last = @Last, Email = @Email, DepartmentId = @DepartmentId WHERE Id = @Id";
+                {"@First", employee.First},
+                {"@Last", employee.Last},
+                {"@Email", employee.Email},
+                {"@DepartmentId", employee.Department.Id},
+                {"@Id", id}
+            };
                 
-                var items = new Dictionary<string, object>
-                {
-                    {"@First", employee.First},
-                    {"@Last", employee.Last},
-                    {"@Email", employee.Email},
-                    {"@DepartmentId", employee.Department.Id},
-                    {"@Id", id}
-                };
-                
-                foreach (var (key, value) in items)
-                {
-                    var parameter = command.CreateParameter();
-                    parameter.ParameterName = key;
-                    parameter.Value = value;
-                    command.Parameters.Add(parameter);
-                }
-
-                return command.ExecuteNonQuery();
+            foreach (var (key, value) in items)
+            {
+                var parameter = command.CreateParameter();
+                parameter.ParameterName = key;
+                parameter.Value = value;
+                command.Parameters.Add(parameter);
             }
+
+            return command.ExecuteNonQuery();
         }
 
         public int DeleteById(int id)
         {
-            using (var connection = ConnectionFactory.Invoke())
-            using (var command = connection.CreateCommand())
-            {
-                connection.Open();
-                command.CommandText = @"DELETE FROM Employee WHERE Id = @Id";
+            using var connection = ConnectionFactory.Invoke();
+            using var command = connection.CreateCommand();
+            connection.Open();
+            command.CommandText = @"DELETE FROM Employee WHERE Id = @Id";
                 
-                var parameter = command.CreateParameter();
-                parameter.ParameterName = "@Id";
-                parameter.Value = id;
-                command.Parameters.Add(parameter);
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "@Id";
+            parameter.Value = id;
+            command.Parameters.Add(parameter);
                 
-                return command.ExecuteNonQuery();
-            }
+            return command.ExecuteNonQuery();
         }
         
         private Func<IDbConnection> ConnectionFactory { get; }

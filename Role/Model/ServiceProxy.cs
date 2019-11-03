@@ -25,11 +25,10 @@ namespace Role.Model
 
         public IList<RoleVO> GetUserRolesById(int id)
         {
-            using (var connection = ConnectionFactory.Invoke())
-            using (var command = connection.CreateCommand())
-            {
-                connection.Open();
-                command.CommandText = @"
+            using var connection = ConnectionFactory.Invoke();
+            using var command = connection.CreateCommand();
+            connection.Open();
+            command.CommandText = @"
                     SELECT First FROM Employee WHERE Id = @Id;
                     SELECT Role.Id AS [Role.Id], Role.NAME AS [Role.Name]
                      FROM Employee
@@ -37,38 +36,34 @@ namespace Role.Model
                      INNER JOIN Role on EmployeeRole.RoleId = Role.Id
                     WHERE Employee.Id = @Id";
                     
-                var parameter = command.CreateParameter();
-                parameter.ParameterName = "@Id";
-                parameter.Value = id;
-                command.Parameters.Add(parameter);
-                
-                using (var reader = command.ExecuteReader())
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "@Id";
+            parameter.Value = id;
+            command.Parameters.Add(parameter);
+
+            using var reader = command.ExecuteReader();
+            if (!reader.Read()) return null;
+            if (!reader.NextResult()) return null;
+            IList<RoleVO> roles = new List<RoleVO>();
+            while (reader.Read())
+            {
+                roles.Add(new RoleVO 
                 {
-                    if (!reader.Read()) return null;
-                    if (!reader.NextResult()) return null;
-                    IList<RoleVO> roles = new List<RoleVO>();
-                    while (reader.Read())
-                    {
-                        roles.Add(new RoleVO 
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Role.Id")), 
-                            Name = reader.GetString(reader.GetOrdinal("Role.Name"))
-                        });
-                    }
-                    return roles;
-                }
+                    Id = reader.GetInt32(reader.GetOrdinal("Role.Id")), 
+                    Name = reader.GetString(reader.GetOrdinal("Role.Name"))
+                });
             }
+            return roles;
         }
         
         public int UpdateUserRolesById(int id, List<int> roleIds)
         {
-            using (var connection = ConnectionFactory.Invoke())
-            using (var command = connection.CreateCommand())
-            {
-                connection.Open();
+            using var connection = ConnectionFactory.Invoke();
+            using var command = connection.CreateCommand();
+            connection.Open();
             
-                var values = roleIds.Aggregate("", (accumulator, roleId) => accumulator + "(" + id + ", " + roleId + "),").TrimEnd(',');
-                command.CommandText = $@"
+            var values = roleIds.Aggregate("", (accumulator, roleId) => accumulator + "(" + id + ", " + roleId + "),").TrimEnd(',');
+            command.CommandText = $@"
                     SET XACT_ABORT ON;
                     BEGIN TRANSACTION
                         BEGIN TRY
@@ -81,13 +76,12 @@ namespace Role.Model
                             THROW;
                         END CATCH";
                 
-                var parameter = command.CreateParameter();
-                parameter.ParameterName = "@Id";
-                parameter.Value = id;
-                command.Parameters.Add(parameter);
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = "@Id";
+            parameter.Value = id;
+            command.Parameters.Add(parameter);
                 
-                return Convert.ToInt32(command.ExecuteScalar());
-            }
+            return Convert.ToInt32(command.ExecuteScalar());
         }
         
         private Func<IDbConnection> ConnectionFactory { get; }

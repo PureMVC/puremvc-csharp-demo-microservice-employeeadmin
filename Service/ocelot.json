@@ -1,6 +1,5 @@
 {
   "ReRoutes": [
-
     {
       "DownstreamPathTemplate": "/employees/{id}/roles",
       "DownstreamScheme": "http",
@@ -11,7 +10,6 @@
         "Type": "LeastConnection"
       }
     },
-    
     {
       "DownstreamPathTemplate": "/employees/{id}",
       "DownstreamScheme": "http",
@@ -22,7 +20,6 @@
         "Type": "LeastConnection"
       }
     },
-
     {
       "DownstreamPathTemplate": "/employees",
       "DownstreamScheme": "http",
@@ -33,7 +30,6 @@
         "Type": "LeastConnection"
       }
     },
-
     {
       "DownstreamPathTemplate": "/departments",
       "DownstreamScheme": "http",
@@ -44,9 +40,7 @@
         "Type": "LeastConnection"
       }
     }
-    
   ],
-  
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:80",
     "ServiceDiscoveryProvider": {

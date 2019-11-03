@@ -36,12 +36,12 @@ namespace Employee.Controller
                         else if (context.Request.Method == "POST")
                         {
                             var resultData = serviceRequest.GetJson<EmployeeVO>();
-                            resultData.Id = serviceProxy.Save(serviceRequest.GetJson<EmployeeVO>());
+                            resultData.Id = serviceProxy.Save(resultData);
                             serviceRequest.SetResultData(201, resultData);
                         }
                         else
                         {
-                            serviceRequest.SetResultData(405, new {Code = 405, Message = "Method Not Allowed"});
+                            serviceRequest.SetResultData(405, new {code = 405, message = "Method Not Allowed"});
                         }
                         break;
 
@@ -62,7 +62,7 @@ namespace Employee.Controller
                                 }
                                 else
                                 {
-                                    serviceRequest.SetResultData(404, new {Code = 404, Message = "Not Found"});
+                                    serviceRequest.SetResultData(404, new {code = 404, message = "Not Found"});
                                 }
                             }
                             else if (context.Request.Method == "PUT")
@@ -70,12 +70,12 @@ namespace Employee.Controller
                                 if (serviceProxy.UpdateById(Int32.Parse(match.Groups[1].Value), serviceRequest.GetJson<EmployeeVO>()) == 1)
                                 {
                                     var employee = serviceRequest.GetJson<EmployeeVO>();
-                                    object result = new {Id = Int32.Parse(match.Groups[1].Value), employee.First, employee.Last, employee.Email, employee.Department};
+                                    var result = new EmployeeVO {Id = Int32.Parse(match.Groups[1].Value), First = employee.First, Last = employee.Last, Email = employee.Email, Department = employee.Department};
                                     serviceRequest.SetResultData(200, result);
                                 }
                                 else
                                 {
-                                    serviceRequest.SetResultData(404, new {Code = 404, Message = "Not Found"});
+                                    serviceRequest.SetResultData(404, new {code = 404, message = "Not Found"});
                                 }
                             }
                             else if (context.Request.Method == "DELETE")
@@ -86,17 +86,17 @@ namespace Employee.Controller
                                 }
                                 else
                                 {
-                                    serviceRequest.SetResultData(404, new {Code = 404, Message = "Not Found"});
+                                    serviceRequest.SetResultData(404, new {code = 404, message = "Not Found"});
                                 }
                             }
                             else
                             {
-                                serviceRequest.SetResultData(405, new {Code = 405, Message = "Method Not Allowed"});
+                                serviceRequest.SetResultData(405, new {code = 405, message = "Method Not Allowed"});
                             }
                         }
                         else
                         {
-                            serviceRequest.SetResultData(404, new {Code = 404, Message = "Not Found"});
+                            serviceRequest.SetResultData(404, new {code = 404, message = "Not Found"});
                         }
                         break;
                 }

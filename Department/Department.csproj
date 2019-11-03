@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp2.2</TargetFramework>
-        <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Consul" Version="0.7.2.6" />
-        <PackageReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-        <PackageReference Include="PureMVC.Multicore" Version="2.1.0" />
+      <PackageReference Include="PureMVC.Multicore" Version="2.1.0" />
+      <PackageReference Include="System.Data.SqlClient" Version="4.8.0-preview2.19523.17" />
     </ItemGroup>
 
 </Project>

@@ -7,9 +7,9 @@
 //
 
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace Role.Model.Request
 {
@@ -32,7 +32,7 @@ namespace Role.Model.Request
         
         public T GetJson<T>()
         {
-            return JsonConvert.DeserializeObject<T>(GetBody());
+            return JsonSerializer.Deserialize<T>(GetBody());
         }
 
         public void SetResultData(int status, object resultData)

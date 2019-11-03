@@ -7,9 +7,10 @@
 //
 
 using System.IO;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace Employee.Model.Request
 {
@@ -23,7 +24,7 @@ namespace Employee.Model.Request
         public string GetBody()
         {
             if (RequestData != null) return (string) RequestData;
-            using (var reader = new StreamReader(Context.Request.Body))
+            using (var reader = new StreamReader(Context.Request.Body, Encoding.UTF8))
             {
                 RequestData = reader.ReadToEnd();
             }
@@ -32,7 +33,7 @@ namespace Employee.Model.Request
         
         public T GetJson<T>()
         {
-            return JsonConvert.DeserializeObject<T>(GetBody());
+            return JsonSerializer.Deserialize<T>(GetBody());
         }
 
         public void SetResultData(int status, object resultData)

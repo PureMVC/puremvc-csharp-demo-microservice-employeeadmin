@@ -6,7 +6,7 @@
 
     <ItemGroup>
       <PackageReference Include="PureMVC.Multicore" Version="2.1.0" />
-      <PackageReference Include="System.Data.SqlClient" Version="4.8.0-preview2.19523.17" />
+      <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     </ItemGroup>
 
 </Project>
